@@ -21,6 +21,6 @@ class Stats(bench.Bench):
         range of weeks
 
         :param player: Unique ID of the player to filter for
-        :param week: Optional. Can be a single week or a range ex: 1-4
+        :param week: Optional. Can be a single week or a range ex: 1-4. If blank will default to season to date
         :return:
         """
