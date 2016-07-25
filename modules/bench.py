@@ -8,7 +8,8 @@ from sys import stdout
 class Bench(object):
     def __init__(self):
         self.session = requests.Session()
-        self.session.headers.update({"Content-Type": "application/json"})
+        self.base_url = 'http://www03.myfantasyleague.com/2015/export?TYPE={}&L={}&JSON=1'
+        self.type = ''
         self.player = ''
         self.team = ''
         self.roster = ''

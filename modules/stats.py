@@ -5,6 +5,7 @@ class Stats(bench.Bench):
     def __init__(self, league):
         bench.Bench.__init__(self)
         self.league = league
+        self.type = 'stats'
 
     def list(self, team=False, player=False):
         """
