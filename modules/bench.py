@@ -13,6 +13,7 @@ class Bench(object):
         self.team = ''
         self.roster = ''
         self.stat = ''
+        self.league = ''
 
     @staticmethod
     def display_options(data, msg, narrow=False):
