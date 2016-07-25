@@ -1,0 +1,26 @@
+import bench
+
+
+class Stats(bench.Bench):
+    def __init__(self, league):
+        bench.Bench.__init__(self)
+        self.league = league
+
+    def list(self, team=False, player=False):
+        """
+        Lists all stats for the current season to date. Can be filtered by team or by player. Default will return stat
+        dump for whole league
+        :param team: Unique ID of the team to filter for
+        :param player: Unique ID of the player to filter for
+        :return:
+        """
+
+    def get_player_by_week(self, player, week=False):
+        """
+        Lists the stat breakdown by week for a given player. Can also be filtered to only return a specific week or a
+        range of weeks
+
+        :param player: Unique ID of the player to filter for
+        :param week: Optional. Can be a single week or a range ex: 1-4
+        :return:
+        """
