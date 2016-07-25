@@ -1,31 +1,18 @@
 # coding=utf-8
-#
-# Copyright 2016 Apperian, Inc.  All Rights Reserved.
-#
+# Author: sroche0@gmail.com
 import requests
 import logging
 from sys import stdout
 
 
 class Bench(object):
-    def __init__(self, region):
-        self.region = region
-        self.token = ''
-        self.user_data = ''
-        self.user = ''
-        self.org_psk = ''
-        self.app = ''
-        self.group = ''
-        self.wrapper = ''
-        self.publisher = ''
-        self.credentials = ''
-        self.py_session = requests.Session()
-        self.py_session.headers.update({"Content-Type": "application/json"})
-        # Setup php session
-        self.php_session = requests.Session()
-        self.php_session.headers = {"Content-Type": "application/js"}
-        self.php_payload = {"id": 1, "apiVersion": "1.0", "method": "", "jsonrpc": "2.0"}
-        self.php_token = "e(PujgdDx0s3kScfctYqCBug{plur1bus^unum})"
+    def __init__(self):
+        self.session = requests.Session()
+        self.session.headers.update({"Content-Type": "application/json"})
+        self.player = ''
+        self.team = ''
+        self.roster = ''
+        self.stat = ''
 
     @staticmethod
     def display_options(data, msg, narrow=False):
@@ -88,6 +75,8 @@ class Bench(object):
         result['result'] = message
         logging.debug(result)
         return result
+
+
 
     @staticmethod
     def status_print(message):
