@@ -2,9 +2,8 @@ import bench
 
 
 class Rosters(bench.Bench):
-    def __init__(self, league):
+    def __init__(self):
         bench.Bench.__init__(self)
-        self.league = league
         self.type = 'rosters'
 
     def get_rosters(self, team=False, week=''):
