@@ -3,7 +3,7 @@
 import json
 import logging
 import os
-import datetime
+from datetime import date
 import requests
 # import modules
 from modules import bench, teams, stats, rosters, players
@@ -29,19 +29,16 @@ class Client(bench.Bench):
         self.roster = rosters.Rosters(self.league)
         self.stat = stats.Stats(self.league)
 
-        pass
-
-    def update_connectors(self):
+    def update_data_cache(self):
         """
         Gets called as part of auth() to update the session token of all the API Connector instances.
         For the connectors that call functions from other connectors it also updates the instances they reference
         """
-        # for module in __all__:
-        #     self.module.league = self.league
-        #     # Do stuff to connectors
-        #     pass
-
-        self.session.headers.update({'X-TOKEN': self.token})
+        # if date.fromtimestamp(os.path.getmtime('{}/player_data.json'.format(self.app_path))) < date.today():
+        self.player_data = self.player.list()
+        if self.player_data['status'] in [200, 302]:
+            with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
+                f.write(json.dumps(self.player_data['result'], indent=2, separators=(',', ': ')))
 
     def logging_init(self):
         cwd = os.getcwd()
@@ -52,7 +49,7 @@ class Client(bench.Bench):
         if len(log_files) > 4:
             os.remove(log_files[0])
 
-        logging.basicConfig(filename='{}.log'.format(datetime.date.today()),
+        logging.basicConfig(filename='{}.log'.format(date.today()),
                             format="[%(levelname)8s] %(message)s",
                             level=logging.DEBUG
                             )
@@ -75,4 +72,9 @@ class Client(bench.Bench):
                            'team_id': '',
                            'base_url': ''
                            }
+                f.write(json.dumps(example, indent=2, separators=(',', ': ')))
+
+        if not os.path.exists('{}/player_data.json'.format(self.app_path)):
+            with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
+                example = {'players': ''}
                 f.write(json.dumps(example, indent=2, separators=(',', ': ')))
