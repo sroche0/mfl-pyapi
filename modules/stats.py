@@ -16,7 +16,7 @@ class Stats(bench.Bench):
         :return:
         """
 
-    def get_player_by_week(self, player, week=False):
+    def get_player_stats(self, player, week=False):
         """
         Lists the stat breakdown by week for a given player. Can also be filtered to only return a specific week or a
         range of weeks
