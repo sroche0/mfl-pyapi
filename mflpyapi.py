@@ -10,34 +10,36 @@ __author__ = 'sroche0@gmail.com'
 
 
 class Client(bench.Bench):
-    def __init__(self, verbose=False):
+    def __init__(self, league=False, verbose=False):
         bench.Bench.__init__(self)
         self.verbose = verbose
         self.app_path = os.path.expanduser('~/.mfl-pyapi/')
         self.application_init()
         self.logging_init()
-        self.league = ''
-        self.init_connectors()
-
-    def init_connectors(self):
-        """
-        Gets called as part of set_league() and creates instances of each API connector
-        """
-        self.player = players.Players(self.league)
-        self.team = teams.Teams(self.league)
-        self.roster = rosters.Rosters(self.league)
-        self.stat = stats.Stats(self.league)
+        self.league = league
+        self.player = players.Players()
+        self.team = teams.Teams()
+        self.roster = rosters.Rosters()
+        self.stat = stats.Stats()
+        self.update_data_cache()
 
     def update_data_cache(self):
         """
-        Gets called as part of auth() to update the session token of all the API Connector instances.
-        For the connectors that call functions from other connectors it also updates the instances they reference
+        Gets called as part of __init__() and checks if the cached data needs to be updated
         """
         if date.fromtimestamp(os.path.getmtime('{}/player_data.json'.format(self.app_path))) < date.today():
-            self.player_data = self.player.list()
-            if self.player_data['status'] in [200, 302]:
+            tmp_player_data = self.player.list()
+            if tmp_player_data['status'] in [200, 302]:
+                self.player_data = tmp_player_data
                 with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
                     f.write(json.dumps(self.player_data['result'], indent=2, separators=(',', ': ')))
+
+            self.update_connectors()
+
+    def update_connectors(self):
+        for module in [self.player, self.team, self.roster, self.stat]:
+            module.league = self.league
+            module.player_data = self.player_data
 
     def logging_init(self):
         cwd = os.getcwd()
@@ -77,3 +79,10 @@ class Client(bench.Bench):
             with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
                 example = {'players': ''}
                 f.write(json.dumps(example, indent=2, separators=(',', ': ')))
+
+    def load_params(self):
+        """
+        Loads params from config.json
+        :return:
+        """
+        pass
