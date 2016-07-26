@@ -5,7 +5,6 @@ import logging
 import os
 from datetime import date
 import requests
-# import modules
 from modules import bench, teams, stats, rosters, players
 __author__ = 'sroche0@gmail.com'
 
@@ -34,11 +33,11 @@ class Client(bench.Bench):
         Gets called as part of auth() to update the session token of all the API Connector instances.
         For the connectors that call functions from other connectors it also updates the instances they reference
         """
-        # if date.fromtimestamp(os.path.getmtime('{}/player_data.json'.format(self.app_path))) < date.today():
-        self.player_data = self.player.list()
-        if self.player_data['status'] in [200, 302]:
-            with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
-                f.write(json.dumps(self.player_data['result'], indent=2, separators=(',', ': ')))
+        if date.fromtimestamp(os.path.getmtime('{}/player_data.json'.format(self.app_path))) < date.today():
+            self.player_data = self.player.list()
+            if self.player_data['status'] in [200, 302]:
+                with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
+                    f.write(json.dumps(self.player_data['result'], indent=2, separators=(',', ': ')))
 
     def logging_init(self):
         cwd = os.getcwd()
