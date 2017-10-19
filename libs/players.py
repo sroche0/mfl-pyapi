@@ -6,7 +6,7 @@ class Players(bench.Bench):
         bench.Bench.__init__(self)
         self.type = 'players'
 
-    def list(self):
+    def dump_player_data(self):
         """
         Lists all the players in the league and what teams they are on
         :return:
