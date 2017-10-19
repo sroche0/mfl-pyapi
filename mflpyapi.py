@@ -77,6 +77,7 @@ class Client(bench.Bench):
             m.league_id = self.league_id
             m.team_id = self.team_id
             m.host = self.host
+            m.base_url = self.base_url
 
     def logging_init(self):
         cwd = os.getcwd()
