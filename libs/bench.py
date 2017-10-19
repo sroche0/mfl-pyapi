@@ -6,16 +6,18 @@ from sys import stdout
 
 
 class Bench(object):
-    def __init__(self, year, league_id, host):
-        self.session = requests.Session()
-        self.base_url = 'http://{}/{}/export?&JSON=1&L={}'.format(host, year, league_id)
+    def __init__(self):
+        self.session = ''
         self.type = ''
-        self.player = ''
-        self.team = ''
+        self.player_id = ''
+        self.team_id = ''
         self.roster = ''
         self.stat = ''
-        self.league = ''
+        self.league_id = ''
+        self.host = ''
+        self.year = ''
         self.player_data = []
+        self.base_url = ''
 
     @staticmethod
     def display_options(data, msg, narrow=False):
