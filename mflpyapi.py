@@ -10,7 +10,7 @@ try:
     keyring.get_keyring()
 except ImportError:
     import getpass
-    keyring=False
+    keyring = False
 
 from libs import bench, teams, stats, rosters, players
 __author__ = 'sroche0@gmail.com'
@@ -31,12 +31,13 @@ class Client(bench.Bench):
         self.application_init()
         self.logging_init()
 
-        self.player = players.Players(self)
-        self.team = teams.Teams(self.host, self.year, self.league_id)
-        self.roster = rosters.Rosters(self.host, self.year, self.league_id)
-        self.stat = stats.Stats(self.host, self.year, self.league_id)
+        self.player = players.Players()
+        self.team = teams.Teams()
+        self.roster = rosters.Rosters()
+        self.stat = stats.Stats()
 
         self.session = requests.Session()
+        self.base_url = 'http://{}/{}/export?&JSON=1&L={}'.format(self.host, self.year, self.league_id)
         self.auth()
 
         # self.update_data_cache()
