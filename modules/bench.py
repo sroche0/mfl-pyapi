@@ -6,9 +6,9 @@ from sys import stdout
 
 
 class Bench(object):
-    def __init__(self):
+    def __init__(self, year, league_id, host):
         self.session = requests.Session()
-        self.base_url = 'http://www03.myfantasyleague.com/2015/export?&JSON=1&L=60050{}'
+        self.base_url = 'http://{}/{}/export?&JSON=1&L={}'.format(host, year, league_id)
         self.type = ''
         self.player = ''
         self.team = ''
@@ -20,29 +20,29 @@ class Bench(object):
     @staticmethod
     def display_options(data, msg, narrow=False):
         valid, choice = False, ''
-        print 'Possible Regions:'
+        print('Possible Regions:')
         if narrow:
             try:
                 for index, value in enumerate(data):
-                    print "    %s. %s" % (index+1, value[narrow])
+                    print("    %s. %s" % (index+1, value[narrow]))
             except KeyError:
-                print 'Passed value is not a key. Select from full list'
+                print('Passed value is not a key. Select from full list')
                 for index, value in enumerate(data):
-                    print "    %s. %s" % (index+1, value)
+                    print("    %s. %s" % (index+1, value))
         else:
             for index, value in enumerate(data):
-                print "    %s. %s" % (index+1, value)
+                print("    %s. %s" % (index+1, value))
 
         while not valid:
             try:
-                choice = int(raw_input('\nPlease select the {} you would like to use: '.format(msg)))
+                choice = int(eval(input('\nPlease select the {} you would like to use: '.format(msg))))
                 if 0 < choice <= len(data):
                     valid = True
                     choice -= 1
                 else:
-                    print 'Please select a valid option between 1 and {}'.format(len(data))
+                    print('Please select a valid option between 1 and {}'.format(len(data)))
             except ValueError:
-                print "Please enter a number."
+                print("Please enter a number.")
 
         return data[choice]
 
@@ -51,7 +51,7 @@ class Bench(object):
         logging.debug(self.log('status_code = {}'.format(result['status'])))
         try:
             message = requests_obj.json()
-            if 'error' in message.keys():
+            if 'error' in list(message.keys()):
                 logging.debug(self.log('Error found in response keys:'))
                 logging.debug(message)
                 message = message['error']
@@ -62,7 +62,7 @@ class Bench(object):
                             message = message[arg]
                     except KeyError:
                         logging.error(self.log('Expected key not present in response'))
-                        logging.debug(self.log('Keys in response json are: {}'.format(message.keys())))
+                        logging.debug(self.log('Keys in response json are: {}'.format(list(message.keys()))))
                         result['status'] = 500
         except ValueError:
             logging.debug(self.log('Unable to get json from  response'))
@@ -83,7 +83,6 @@ class Bench(object):
     def log(message):
         log_msg = '[MFL-PYAPI] {}'.format(message)
         return log_msg
-
 
     @staticmethod
     def status_print(message):

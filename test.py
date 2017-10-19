@@ -1,4 +1,4 @@
-import mflpyapi
+from . import mflpyapi
 from pprint import pprint
 
 c = mflpyapi.Client()

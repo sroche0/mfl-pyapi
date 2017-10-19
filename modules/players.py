@@ -1,4 +1,4 @@
-import bench
+from . import bench
 
 
 class Players(bench.Bench):

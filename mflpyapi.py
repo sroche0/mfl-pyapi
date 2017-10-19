@@ -5,13 +5,13 @@ import logging
 import os
 from datetime import date
 import requests
-from modules import bench, teams, stats, rosters, players
+from .modules import bench, teams, stats, rosters, players
 __author__ = 'sroche0@gmail.com'
 
 
 class Client(bench.Bench):
     def __init__(self, league=False, verbose=False):
-        bench.Bench.__init__(self)
+        bench.Bench.__init__(self, league_id=league, host='gesljoinordie.com', year='2017')
         self.verbose = verbose
         self.app_path = os.path.expanduser('~/.mfl-pyapi/')
         self.application_init()
@@ -36,10 +36,10 @@ class Client(bench.Bench):
 
             self.update_connectors()
 
-    def update_connectors(self):
-        for module in [self.player, self.team, self.roster, self.stat]:
-            module.league = self.league
-            module.player_data = self.player_data
+    def sync_connectors(self):
+        for m in [self.player, self.team, self.roster, self.stat]:
+            m.league = self.league
+            m.player_data = self.player_data
 
     def logging_init(self):
         cwd = os.getcwd()
@@ -63,8 +63,8 @@ class Client(bench.Bench):
 
     def application_init(self):
         if not os.path.exists(self.app_path):
-            print 'First time run detected, creating app directory at {}'.format(self.app_path)
-            print 'To set default values for future runs, edit config.json in app directory'
+            print('First time run detected, creating app directory at {}'.format(self.app_path))
+            print('To set default values for future runs, edit config.json in app directory')
             os.makedirs(self.app_path)
 
         if not os.path.exists('{}/config.json'.format(self.app_path)):
