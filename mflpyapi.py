@@ -12,7 +12,7 @@ except ImportError:
     import getpass
     keyring = False
 
-from libs import bench, teams, stats, rosters, players
+from libs import bench, teams, stats, rosters, datafetch
 __author__ = 'sroche0@gmail.com'
 
 
@@ -31,10 +31,7 @@ class Client(bench.Bench):
         self.application_init()
         self.logging_init()
 
-        self.player = players.Players()
-        self.team = teams.Teams()
-        self.roster = rosters.Rosters()
-        self.stat = stats.Stats()
+        self.players = datafetch.Players()
 
         self.session = requests.Session()
         self.base_url = 'http://{}/{}/export?&JSON=1'.format(self.host, self.year, self.league_id)
@@ -60,7 +57,7 @@ class Client(bench.Bench):
         Gets called as part of __init__() and checks if the cached data needs to be updated
         """
         if date.fromtimestamp(os.path.getmtime('{}/player_data.json'.format(self.app_path))) < date.today():
-            tmp_player_data = self.player.dump_player_data()
+            tmp_player_data = self.players.list()
             if tmp_player_data['status'] in [200, 302]:
                 self.player_data = tmp_player_data
                 with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
@@ -69,7 +66,7 @@ class Client(bench.Bench):
             self.sync_connectors()
 
     def sync_connectors(self):
-        for m in [self.player, self.team, self.roster, self.stat]:
+        for m in [self.players, self.team, self.roster, self.stat]:
             m.league_id = self.league_id
             m.player_data = self.player_data
             m.session = self.session

@@ -6,7 +6,7 @@ class Players(bench.Bench):
         bench.Bench.__init__(self)
         self.type = 'players'
 
-    def dump_player_data(self, details=0, since='', players=''):
+    def list(self, details=0, since='', players=''):
         """
         Lists all the players in the league and what teams they are on
 
@@ -27,7 +27,7 @@ class Players(bench.Bench):
         response = self.response_check(r, 'players', 'player')
         return response
 
-    def player_scores(self, league_id='', week='', year='', players='', position='', status='', rules='', count=''):
+    def scores(self, league_id='', week='', year='', players='', position='', status='', rules='', count=''):
         """
         All player scores for a given league/week, including all rostered players as well as all free agents.
 

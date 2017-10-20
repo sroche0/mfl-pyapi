@@ -4,7 +4,7 @@ from pprint import pprint
 c = mflpyapi.Client()
 
 # c.update_data_cache()
-players = c.player.player_scores()
+players = c.players.scores()
 print(players)
 
 for i in players['result']['playerscore']:
