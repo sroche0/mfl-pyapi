@@ -67,7 +67,7 @@ class Bench(object):
                         logging.debug(self.log('Keys in response json are: {}'.format(list(message.keys()))))
                         result['status'] = 500
         except ValueError:
-            logging.debug(self.log('Unable to get json from  response'))
+            logging.error(self.log('Unable to get json from  response'))
             logging.debug(self.log(requests_obj.text))
             result['status'] = 500
             message = requests_obj.text
