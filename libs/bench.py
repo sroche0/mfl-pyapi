@@ -49,7 +49,11 @@ class Bench(object):
         return data[choice]
 
     def response_check(self, requests_obj, *args):
-        result = {'status': requests_obj.status_code}
+        result = {
+            'status': requests_obj.status_code,
+            'http_code': requests_obj.status_code,
+            'headers': requests_obj.headers
+        }
         logging.debug(self.log('status_code = {}'.format(result['status'])))
         try:
             message = requests_obj.json()
