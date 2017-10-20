@@ -37,7 +37,7 @@ class Client(bench.Bench):
         self.stat = stats.Stats()
 
         self.session = requests.Session()
-        self.base_url = 'http://{}/{}/export?&JSON=1&L={}'.format(self.host, self.year, self.league_id)
+        self.base_url = 'http://{}/{}/export?&JSON=1'.format(self.host, self.year, self.league_id)
         self.auth()
 
         # self.update_data_cache()
@@ -64,7 +64,7 @@ class Client(bench.Bench):
             if tmp_player_data['status'] in [200, 302]:
                 self.player_data = tmp_player_data
                 with open('{}/player_data.json'.format(self.app_path), 'wb') as f:
-                    f.write(json.dumps(self.player_data['result'], indent=2, separators=(',', ': ')))
+                    json.dump(self.player_data['result'], f)
 
             self.sync_connectors()
 
