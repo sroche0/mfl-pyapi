@@ -72,3 +72,100 @@ class Players(bench.Bench):
 
         response = self.response_check(r, 'playerScores')
         return response
+
+    def injuries(self, week=''):
+        """
+        The player ID, status (IR, Out, Questionable, Doubtful, Probable) and details (i.e., 'Knee', 'Foot', 'Ribs',
+        etc.) of all players on the official NFL injury report.
+
+        :param week: If the week is not specified, it defaults to the most recent week that injury data is available.
+        :return:
+        """
+        endpoint = '{}&TYPE=injuries&W={}'.format(self.base_url, week)
+
+        r = self.session.get(endpoint)
+
+        response = self.response_check(r, 'injuries', 'injury')
+        response['result'] = [response['result'][x] for x in response['result']]
+        return response
+
+    def adp(self, days, time, franchises, is_ppr, is_keeper, is_mock, injured, cutoff, details):
+        """
+        :param days: This returns draft data from the past number of days specified by this parameter.
+                        Valid values are 1, 7, 14 and 30.
+        :param time: This returns draft data since the start of the closest 2-week intervale to the specified
+                        unix time. These intervals are the ones listed in the ADP Report. If both the DAYS and TIME
+                        arguments are passed, TIME takes precedence.
+        :param franchises: This returns draft data from just leagues with this number of franchises.
+                            Valid values are 8, 10, 12, 14 or 16. If the value is 8, it returns data from leagues with
+                            8 or less franchises. If the value is 16 it returns data from leagues with 16 or more
+                            franchises.
+        :param is_ppr: Filters the data returned as follows: If set to 0, data is from leagues that not use a PPR
+                        scoring system; if set to 1, only from PPR scoring system; if set to -1 (or not set), all
+                        leagues.
+        :param is_keeper: Filters the draft data returns as follows: If set to 0, redrafts leagues only; if set to 1,
+                            keeper leagues only; if set to 2, rookie-only drafts; if set to 3, MFL Public Leagues.
+                            Default is 0.
+        :param is_mock: If set to 1, returns data from mock draft leagues only. If set to 0, excludes data from mock
+                        draft leagues. If set to -1, returns all
+        :param injured: If set to 1, it includes players that are injured. If not set or set to 0, it excludes
+                        injured players.
+        :param cutoff: Only returns data for players selected in at least this ppercentage of drafts.
+                        So if you pass 10, it means that players selected in less than 10% of all drafts will not be
+                        returned. Note that if the value is less than 5, the results may be unpredicatble.
+        :param details: If set to 1, it returns the leagues that were included in the results.
+
+        :return:
+        """
+        endpoint = '{}TYPE={}adp&DAYS={}&TIME={}&FRANCHISES={}&IS_PPR={}&IS_KEEPER={}&IS_MOCK={}&INJURED={}&CUTOFF={}&DETAILS={}'.format(
+            days,
+            time,
+            franchises,
+            is_ppr,
+            is_keeper,
+            is_mock,
+            injured,
+            cutoff,
+            details
+        )
+
+        r = self.session.get(endpoint)
+
+        response = self.response_check(r, 'adp', 'player')
+        response['result'] = [response['result'][x] for x in response['result']]
+        return response
+
+    def top_adds(self, week=''):
+        """
+        The most-added players across all MyFantasyLeague.com-hosted leagues, as well as the percentage of leagues that
+        they've been added in. Only players that have been added in more than 2% of our leagues will be displayed.
+
+        :param week: If the week is specified, it returns the data for that week, otherwise the most current data is
+                        returned.
+        :return:
+        """
+        endpoint = '{}&TYPE=topAdds&W={}'.format(self.base_url, week)
+
+        r = self.session.get(endpoint)
+
+        response = self.response_check(r, 'topAdds', 'player')
+        response['result'] = [response['result'][x] for x in sorted(response['result'].keys())]
+        return response
+
+    def top_drops(self, week=''):
+        """
+        The most-dropped players across all MyFantasyLeague.com-hosted leagues, as well as the percentage of leagues
+        that they've been dropped in. Only players that have been dropped in more than 2% of our leagues will be
+        displayed.
+
+        :param week: If the week is specified, it returns the data for that week, otherwise the most current data is
+                        returned.
+        :return:
+        """
+        endpoint = '{}&TYPE=topAdds&W={}'.format(self.base_url, week)
+
+        r = self.session.get(endpoint)
+
+        response = self.response_check(r, 'topDrops', 'player')
+        response['result'] = [response['result'][x] for x in sorted(response['result'].keys())]
+        return response
