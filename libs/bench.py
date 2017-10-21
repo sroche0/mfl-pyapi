@@ -22,18 +22,18 @@ class Bench(object):
     @staticmethod
     def display_options(data, msg, narrow=False):
         valid, choice = False, ''
-        print('Possible Regions:')
+        print('Select one from below:')
         if narrow:
             try:
                 for index, value in enumerate(data):
-                    print("    %s. %s" % (index+1, value[narrow]))
+                    print("    {}. {}".format(index+1, value[narrow]))
             except KeyError:
                 print('Passed value is not a key. Select from full list')
                 for index, value in enumerate(data):
-                    print("    %s. %s" % (index+1, value))
+                    print("    {}. {}".format(index+1, value))
         else:
             for index, value in enumerate(data):
-                print("    %s. %s" % (index+1, value))
+                print("    {}. {}".format(index+1, value))
 
         while not valid:
             try:
@@ -54,11 +54,11 @@ class Bench(object):
             'http_code': requests_obj.status_code,
             'headers': requests_obj.headers
         }
-        logging.debug(self.log('status_code = {}'.format(result['status'])))
+        logging.debug('status_code = {}'.format(result['status']))
         try:
             message = requests_obj.json()
             if 'error' in list(message.keys()):
-                logging.debug(self.log('Error found in response keys:'))
+                logging.debug('Error found in response keys:')
                 logging.debug(message)
                 message = message['error']
             else:
@@ -67,12 +67,12 @@ class Bench(object):
                         for arg in args:
                             message = message[arg]
                     except KeyError:
-                        logging.error(self.log('Expected key not present in response'))
-                        logging.debug(self.log('Keys in response json are: {}'.format(list(message.keys()))))
+                        logging.error('Expected key not present in response')
+                        logging.debug('Keys in response json are: {}'.format(message.keys()))
                         result['status'] = 500
         except ValueError:
-            logging.error(self.log('Unable to get json from  response'))
-            logging.debug(self.log(requests_obj.text))
+            logging.error('Unable to get json from  response')
+            logging.debug(requests_obj.text)
             result['status'] = 500
             message = requests_obj.text
 
@@ -84,11 +84,6 @@ class Bench(object):
 
     def cache_data(self):
         pass
-
-    @staticmethod
-    def log(message):
-        log_msg = '[MFL-PYAPI] {}'.format(message)
-        return log_msg
 
     @staticmethod
     def status_print(message):
