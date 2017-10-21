@@ -12,7 +12,7 @@ except ImportError:
     import getpass
     keyring = False
 
-from libs import bench, teams, stats, rosters, datafetch
+from libs import bench, datafetch
 __author__ = 'sroche0@gmail.com'
 
 
