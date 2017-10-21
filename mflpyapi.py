@@ -46,11 +46,9 @@ class Client(bench.Bench):
         """
         url = "https://{}/{}/login?USERNAME={}&PASSWORD={}&XML=1".format(self.host, self.year, self.user, self.password)
         r = self.session.get(url)
-        response = self.response_check(r)
-
-        self.session.headers.update({"Cookie": r.headers['Set-Cookie']})
-
-        self.sync_connectors()
+        if r.status_code == 200:
+            self.session.headers.update({"Cookie": r.headers['Set-Cookie']})
+            self.sync_connectors()
 
     def update_data_cache(self):
         """
@@ -66,7 +64,7 @@ class Client(bench.Bench):
             self.sync_connectors()
 
     def sync_connectors(self):
-        for m in [self.players, self.team, self.roster, self.stat]:
+        for m in [self.players]:
             m.league_id = self.league_id
             m.player_data = self.player_data
             m.session = self.session
@@ -77,6 +75,11 @@ class Client(bench.Bench):
             m.base_url = self.base_url
 
     def logging_init(self):
+        """
+        Initialize
+
+        :return:
+        """
         cwd = os.getcwd()
 
         os.chdir(self.app_path)
@@ -86,7 +89,7 @@ class Client(bench.Bench):
             os.remove(log_files[0])
 
         logging.basicConfig(filename='{}.log'.format(date.today()),
-                            format="[%(levelname)8s] %(message)s",
+                            format="[%(levelname)8s][%(funcName)s] %(message)s",
                             level=logging.DEBUG
                             )
 
