@@ -34,7 +34,8 @@ class Client(bench.Bench):
         self.players = datafetch.Players()
 
         self.session = requests.Session()
-        self.base_url = 'http://{}/{}/export?&JSON=1'.format(self.host, self.year, self.league_id)
+        self.session.headers['Accept'] = 'application/json'
+        self.base_url = 'http://{}/{}/export'.format(self.host, self.year, self.league_id)
         self.auth()
 
         # self.update_data_cache()
@@ -44,11 +45,18 @@ class Client(bench.Bench):
         authenticates to the API
         :return:
         """
-        url = "https://{}/{}/login?USERNAME={}&PASSWORD={}&XML=1".format(self.host, self.year, self.user, self.password)
-        r = self.session.get(url)
+        url = "https://{}/{}/login".format(self.host, self.year)
+        params = {
+            'USERNAME': self.user,
+            'PASSWORD': self.password,
+            'XML': '1'
+        }
+        r = self.session.get(url, params=params)
         if r.status_code == 200:
             self.session.headers.update({"Cookie": r.headers['Set-Cookie']})
             self.sync_connectors()
+
+        self.session.headers['Accept'] = 'application/json'
 
     def update_data_cache(self):
         """

@@ -1,10 +1,42 @@
 from . import bench
+import logging
 
 
 class Players(bench.Bench):
     def __init__(self):
         bench.Bench.__init__(self)
         self.type = 'players'
+
+    def response_check(self, requests_obj, *args):
+        result = {
+            'status': requests_obj.status_code,
+            'http_code': requests_obj.status_code,
+            'headers': requests_obj.headers
+        }
+        logging.debug('status_code = {}'.format(result['status']))
+        try:
+            message = requests_obj.json()
+            if 'error' in list(message.keys()):
+                logging.debug('Error found in response keys:')
+                logging.debug(message)
+                message = message['error']
+            else:
+                if args:
+                    try:
+                        for arg in args:
+                            message = message[arg]
+                    except KeyError:
+                        logging.error('Expected key not present in response')
+                        logging.debug('Keys in response json are: {}'.format(message.keys()))
+                        result['status'] = 500
+        except ValueError:
+            logging.error('Unable to get json from  response')
+            logging.debug(requests_obj.text)
+            result['status'] = 500
+            message = requests_obj.text
+
+        result['result'] = message
+        return result
 
     def list(self, details=0, since='', players=''):
         """
@@ -19,10 +51,16 @@ class Players(bench.Bench):
         """
         if isinstance(players, list):
             players = ','.join(players)
+        
+        params = {
+            'TYPE': 'players',
+            'DETAILS': details,
+            'SINCE': since,
+            'PLAYERS': players,
+            'JSON': '1'
+        }
 
-        endpoint = '{}&TYPE=players&DETAILS={}SINCE={}&PLAYERS={}'.format(self.base_url, details, since, players)
-
-        r = self.session.get(endpoint)
+        r = self.session.get(self.base_url, params=params)
 
         response = self.response_check(r, 'players', 'player')
         return response
@@ -55,22 +93,22 @@ class Players(bench.Bench):
         if isinstance(players, list):
             players = ','.join(players)
 
-        endpoint = '{}&TYPE=playerScores&L={}&W={}&YEAR={}&PLAYERS={}&POSITION={}&STATUS={}&RULES={}&COUNT={}'.format(
-            self.base_url,
-            league_id,
-            week,
-            year,
-            players,
-            position,
-            status,
-            rules,
-            count
-        )
-        print(endpoint)
+        params = {
+            'TYPE': 'playerScores',
+            'L': league_id,
+            'W': week,
+            'YEAR': year,
+            'PLAYERS': players,
+            'POSITION': position,
+            'STATUS': status,
+            'RULES': rules,
+            'COUNT': count,
+            'JSON': '1'
+        }
 
-        r = self.session.get(endpoint)
+        r = self.session.get(self.base_url, params=params)
 
-        response = self.response_check(r, 'playerScores')
+        response = self.response_check(r, 'playerScores', 'playerScore')
         return response
 
     def injuries(self, week=''):
@@ -81,9 +119,13 @@ class Players(bench.Bench):
         :param week: If the week is not specified, it defaults to the most recent week that injury data is available.
         :return:
         """
-        endpoint = '{}&TYPE=injuries&W={}'.format(self.base_url, week)
+        params = {
+            'TYPE': 'injuries',
+            'W': week,
+            'JSON': '1'
+        }
 
-        r = self.session.get(endpoint)
+        r = self.session.get(self.base_url, params=params)
 
         response = self.response_check(r, 'injuries', 'injury')
         response['result'] = [response['result'][x] for x in response['result']]
@@ -117,19 +159,21 @@ class Players(bench.Bench):
 
         :return:
         """
-        endpoint = '{}TYPE={}adp&DAYS={}&TIME={}&FRANCHISES={}&IS_PPR={}&IS_KEEPER={}&IS_MOCK={}&INJURED={}&CUTOFF={}&DETAILS={}'.format(
-            days,
-            time,
-            franchises,
-            is_ppr,
-            is_keeper,
-            is_mock,
-            injured,
-            cutoff,
-            details
-        )
+        params = {
+            'TYPE': 'adp',
+            'DAYS': days,
+            'TIME': time,
+            'FRANCHISES': franchises,
+            'IS_PPR': is_ppr,
+            'IS_KEEPER': is_keeper,
+            'IS_MOCK': is_mock,
+            'INJURED': injured,
+            'CUTOFF': cutoff,
+            'DETAILS': details,
+            'JSON': '1'
+        }
 
-        r = self.session.get(endpoint)
+        r = self.session.get(self.base_url, params=params)
 
         response = self.response_check(r, 'adp', 'player')
         response['result'] = [response['result'][x] for x in response['result']]
@@ -144,9 +188,13 @@ class Players(bench.Bench):
                         returned.
         :return:
         """
-        endpoint = '{}&TYPE=topAdds&W={}'.format(self.base_url, week)
+        params = {
+            'TYPE': 'topAdds',
+            'W': week,
+            'JSON': '1'
+        }
 
-        r = self.session.get(endpoint)
+        r = self.session.get(self.base_url, params=params)
 
         response = self.response_check(r, 'topAdds', 'player')
         response['result'] = [response['result'][x] for x in sorted(response['result'].keys())]
@@ -162,9 +210,13 @@ class Players(bench.Bench):
                         returned.
         :return:
         """
-        endpoint = '{}&TYPE=topAdds&W={}'.format(self.base_url, week)
+        params = {
+            'TYPE': 'topDrops',
+            'W': week,
+            'JSON': '1'
+        }
 
-        r = self.session.get(endpoint)
+        r = self.session.get(self.base_url, params=params)
 
         response = self.response_check(r, 'topDrops', 'player')
         response['result'] = [response['result'][x] for x in sorted(response['result'].keys())]

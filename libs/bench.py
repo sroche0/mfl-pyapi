@@ -48,37 +48,6 @@ class Bench(object):
 
         return data[choice]
 
-    def response_check(self, requests_obj, *args):
-        result = {
-            'status': requests_obj.status_code,
-            'http_code': requests_obj.status_code,
-            'headers': requests_obj.headers
-        }
-        logging.debug('status_code = {}'.format(result['status']))
-        try:
-            message = requests_obj.json()
-            if 'error' in list(message.keys()):
-                logging.debug('Error found in response keys:')
-                logging.debug(message)
-                message = message['error']
-            else:
-                if args:
-                    try:
-                        for arg in args:
-                            message = message[arg]
-                    except KeyError:
-                        logging.error('Expected key not present in response')
-                        logging.debug('Keys in response json are: {}'.format(message.keys()))
-                        result['status'] = 500
-        except ValueError:
-            logging.error('Unable to get json from  response')
-            logging.debug(requests_obj.text)
-            result['status'] = 500
-            message = requests_obj.text
-
-        result['result'] = message
-        return result
-
     def change_base_url(self):
         pass
 
@@ -89,3 +58,9 @@ class Bench(object):
     def status_print(message):
         stdout.write(message.ljust(30, '.'))
         stdout.flush()
+
+    def request_method(self, f):
+
+
+        pass
+
